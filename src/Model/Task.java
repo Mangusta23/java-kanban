@@ -4,6 +4,8 @@ public class Task {
     protected String name;
     protected String description;
     protected int id;
+    protected String status;
+
 
     public String getName() {
         return name;
@@ -37,5 +39,8 @@ public class Task {
         this.status = status;
     }
 
-    protected String status;
+    @Override
+    public String toString(){
+        return "'ID' " + id + " 'name' " + name + " 'Description' " + description + " 'Status' " + status;
+    }
 }
