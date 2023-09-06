@@ -10,11 +10,10 @@ public class Managers<T> {
         this.element = element;
     }
     public TaskManager getDefault(){
-        if (element instanceof Task || element instanceof SubTask || element instanceof Epic) {
-            InMemoryTaskManager taskManager = new InMemoryTaskManager();
-            return taskManager;
-        }else{
-            return null;
-        }
+        return new InMemoryTaskManager();
     };
+
+    public static InMemoryHistoryManager getDefaultHistory(){
+        return new InMemoryHistoryManager();
+    }
 }

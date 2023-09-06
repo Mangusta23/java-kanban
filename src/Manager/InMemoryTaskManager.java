@@ -16,6 +16,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     private ArrayList<Task> savedTasks = new ArrayList<>();
     private int nextId = 1;
+    public InMemoryHistoryManager history = new InMemoryHistoryManager();
 
     @Override
     public void addTask(Task task) {
@@ -127,7 +128,7 @@ public class InMemoryTaskManager implements TaskManager{
         Epic epic = epics.get(epicId);
         if (epic != null) {
             for (int subTaskId : epic.getTasksIds()){
-                savePastTask(subTasks.get(subTaskId));
+                history.add(subTasks.get(subTaskId));
             }
             return epic.getTasksIds();
         }else{
@@ -136,14 +137,14 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     public Task getTask(int taskId){
-        savePastTask(tasks.get(taskId));
+        history.add(tasks.get(taskId));
         return tasks.get(taskId);
     }
 
     @Override
     public ArrayList<Task> getAllTasks(){
         for (Task task : tasks.values()) {
-            savePastTask(task);
+            history.add(task);
         }
         return new ArrayList<>(tasks.values());
     }
@@ -151,21 +152,12 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public ArrayList<SubTask> getAllSubTasks(){
         for (Task task : subTasks.values()) {
-            savePastTask(task);
+            history.add(task);
         }
         return new ArrayList<>(subTasks.values());
     }
 
-    public void savePastTask(Task task){
-        if (savedTasks.size() < 10) {
-            savedTasks.add(task);
-        }else{
-            savedTasks.remove(0);
-            savedTasks.add(task);
-        }
-    }
-
     public ArrayList<Task> getSavedTasks(){
-        return new ArrayList<>(savedTasks);
+        return history.getHistory();
     }
 }
