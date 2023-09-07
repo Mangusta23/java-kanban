@@ -1,6 +1,7 @@
 package Manager;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 import Model.Epic;
@@ -16,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     private ArrayList<Task> savedTasks = new ArrayList<>();
     private int nextId = 1;
-    public InMemoryHistoryManager history = new InMemoryHistoryManager();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public void addTask(Task task) {
@@ -78,6 +79,23 @@ public class InMemoryTaskManager implements TaskManager{
         epics.clear();
         tasks.clear();
     }
+    @Override
+    public void deleteTasks() {
+        tasks.clear();
+    }
+    @Override
+    public void deleteSubtasks() {
+        for (Epic epic : epics.values()) {
+            epic.cleanSubTaskIds();
+            checkEpicStatus(epic.getId());
+        }
+        subTasks.clear();
+    }
+    @Override
+    public void deleteEpics() {
+        epics.clear();
+        subTasks.clear();
+    }
 
     @Override
     public void deleteEpic(Epic epic) {
@@ -118,8 +136,10 @@ public class InMemoryTaskManager implements TaskManager{
         }
     }
 
+    @Override
     public Epic getEpic(int id){
         Epic epic = epics.get(id);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -127,37 +147,35 @@ public class InMemoryTaskManager implements TaskManager{
     public ArrayList<Integer> getEpicTasks(int epicId) {
         Epic epic = epics.get(epicId);
         if (epic != null) {
-            for (int subTaskId : epic.getTasksIds()){
-                history.add(subTasks.get(subTaskId));
-            }
             return epic.getTasksIds();
         }else{
             return null;
         }
     }
 
+    @Override
     public Task getTask(int taskId){
-        history.add(tasks.get(taskId));
+        historyManager.add(tasks.get(taskId));
         return tasks.get(taskId);
+    }
+    @Override
+    public SubTask getSubTask(int subTaskId){
+        historyManager.add(subTasks.get(subTaskId));
+        return subTasks.get(subTaskId);
     }
 
     @Override
     public ArrayList<Task> getAllTasks(){
-        for (Task task : tasks.values()) {
-            history.add(task);
-        }
         return new ArrayList<>(tasks.values());
     }
 
     @Override
     public ArrayList<SubTask> getAllSubTasks(){
-        for (Task task : subTasks.values()) {
-            history.add(task);
-        }
         return new ArrayList<>(subTasks.values());
     }
 
-    public ArrayList<Task> getSavedTasks(){
-        return history.getHistory();
+    @Override
+    public List<Task> getSavedTasks(){
+        return historyManager.getHistory();
     }
 }

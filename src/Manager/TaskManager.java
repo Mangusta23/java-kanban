@@ -1,5 +1,6 @@
 package Manager;
 import java.util.ArrayList;
+import java.util.List;
 import Model.*;
 
 public interface TaskManager {
@@ -12,8 +13,15 @@ public interface TaskManager {
     void updateEpic (Epic epic);
     void deleteTask(int id);
     void deleteAllTasks();
+    void deleteTasks();
+    void deleteSubtasks();
+    void deleteEpics();
     void deleteEpic(Epic epic);
-    ArrayList<Integer> getEpicTasks(int id);
-    ArrayList<Task> getAllTasks();
-    ArrayList<SubTask> getAllSubTasks();
+    List<Integer> getEpicTasks(int id);
+    List<Task> getAllTasks();
+    List<SubTask> getAllSubTasks();
+    Task getTask(int id);
+    SubTask getSubTask(int id);
+    Epic getEpic(int id);
+    List<Task> getSavedTasks();
 }

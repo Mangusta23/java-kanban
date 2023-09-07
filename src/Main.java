@@ -1,4 +1,5 @@
-import Manager.InMemoryTaskManager;
+import Manager.TaskManager;
+import Manager.Managers;
 import Model.Epic;
 import Model.SubTask;
 import Model.Task;
@@ -7,7 +8,7 @@ import Model.TaskStatus;
 public class Main {
     public static void main(String[] args) {
 
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        TaskManager inMemoryTaskManager = Managers.getDefault();
 
         Task task1 = new Task();
 
@@ -58,8 +59,11 @@ public class Main {
         subTask3.setEpicId(epic2.getId());
         inMemoryTaskManager.addSubTask(subTask3);
 
-        inMemoryTaskManager.getAllTasks();
-        inMemoryTaskManager.getAllSubTasks();
+        inMemoryTaskManager.getTask(1);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.getSubTask(4);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.getSubTask(4);
         System.out.println(inMemoryTaskManager.getSavedTasks());
     }
 }
