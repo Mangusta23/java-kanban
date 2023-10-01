@@ -1,5 +1,4 @@
 package Manager;
-import java.util.ArrayList;
 import java.util.List;
 import Model.*;
 
@@ -23,5 +22,5 @@ public interface TaskManager {
     Task getTask(int id);
     SubTask getSubTask(int id);
     Epic getEpic(int id);
-    List<Task> getSavedTasks();
+    List<Task> getHistory();
 }

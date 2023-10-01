@@ -15,7 +15,6 @@ public class InMemoryTaskManager implements TaskManager{
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, SubTask> subTasks = new HashMap<>();
 
-    private ArrayList<Task> savedTasks = new ArrayList<>();
     private int nextId = 1;
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -207,7 +206,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<Task> getSavedTasks(){
+    public List<Task> getHistory(){
         return historyManager.getHistory();
     }
 }

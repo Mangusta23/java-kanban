@@ -21,12 +21,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         }else{
             oldTail.next = newNode;
         }
-        if (historyMap.containsKey(task.getId())){
+        if (historyMap.containsKey(task.getId())) {
             remove(task.getId());
-            historyMap.put(task.getId(), newNode);
-        }else{
-            historyMap.put(task.getId(), newNode);
         }
+        historyMap.put(task.getId(), newNode);
     }
     @Override
     public void remove(int taskId){

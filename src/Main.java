@@ -60,18 +60,18 @@ public class Main {
         inMemoryTaskManager.addSubTask(subTask3);
 
         inMemoryTaskManager.getTask(1);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.getTask(2);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.getSubTask(4);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.getTask(1);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.getEpic(3);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.deleteTask(2);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
         inMemoryTaskManager.deleteEpic(3);
-        System.out.println(inMemoryTaskManager.getSavedTasks());
+        System.out.println(inMemoryTaskManager.getHistory());
     }
 }
