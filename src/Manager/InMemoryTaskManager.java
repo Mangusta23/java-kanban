@@ -69,22 +69,43 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public void deleteTask(int id) {
-        if (subTasks.containsKey(id)) {subTasks.remove(id);}
-        if (tasks.containsKey(id)) {tasks.remove(id);}
+        if (subTasks.containsKey(id)) {
+            subTasks.remove(id);
+            historyManager.remove(id);
+        }
+        if (tasks.containsKey(id)) {
+            tasks.remove(id);
+            historyManager.remove(id);
+        }
     }
 
     @Override
     public void deleteAllTasks() {
+        for (int x : subTasks.keySet()){
+            historyManager.remove(x);
+        }
         subTasks.clear();
+        for (int x : epics.keySet()){
+            historyManager.remove(x);
+        }
         epics.clear();
+        for (int x : tasks.keySet()){
+            historyManager.remove(x);
+        }
         tasks.clear();
     }
     @Override
     public void deleteTasks() {
+        for (int x : tasks.keySet()){
+            historyManager.remove(x);
+        }
         tasks.clear();
     }
     @Override
     public void deleteSubtasks() {
+        for (int x : epics.keySet()){
+            historyManager.remove(x);
+        }
         for (Epic epic : epics.values()) {
             epic.cleanSubTaskIds();
             checkEpicStatus(epic.getId());
@@ -93,13 +114,24 @@ public class InMemoryTaskManager implements TaskManager{
     }
     @Override
     public void deleteEpics() {
+        for (int x : epics.keySet()){
+            historyManager.remove(x);
+        }
         epics.clear();
+        for (int x : subTasks.keySet()){
+            historyManager.remove(x);
+        }
         subTasks.clear();
     }
 
     @Override
-    public void deleteEpic(Epic epic) {
-        Epic deletedEpic = epics.remove(epic.getId());
+    public void deleteEpic(int epicId) {
+        Epic epic = epics.get(epicId);
+        for (int x : epic.getTasksIds()){
+            historyManager.remove(x);
+        }
+        historyManager.remove(epicId);
+        epics.remove(epic.getId());
     }
 
     public void checkEpicStatus(int taskId){

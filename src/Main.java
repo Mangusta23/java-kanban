@@ -61,9 +61,17 @@ public class Main {
 
         inMemoryTaskManager.getTask(1);
         System.out.println(inMemoryTaskManager.getSavedTasks());
-        inMemoryTaskManager.getSubTask(4);
+        inMemoryTaskManager.getTask(2);
         System.out.println(inMemoryTaskManager.getSavedTasks());
         inMemoryTaskManager.getSubTask(4);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.getTask(1);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.getEpic(3);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.deleteTask(2);
+        System.out.println(inMemoryTaskManager.getSavedTasks());
+        inMemoryTaskManager.deleteEpic(3);
         System.out.println(inMemoryTaskManager.getSavedTasks());
     }
 }
