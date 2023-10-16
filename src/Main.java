@@ -3,75 +3,55 @@ import Manager.Managers;
 import Model.Epic;
 import Model.SubTask;
 import Model.Task;
-import Model.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
 
-        TaskManager inMemoryTaskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = new Task();
 
-        task1.setName("задача1");
-        task1.setDescription("Описание_задачи_1");
-        task1.setStatus(TaskStatus.NEW);
-        inMemoryTaskManager.addTask(task1);
+        Epic epic1 = new Epic("Эпик1", "Описание_эпика_1");
+        taskManager.addEpic(epic1);
 
-        Task task2 = new Task();
 
-        task2.setName("задача2");
-        task2.setDescription("Описание_задачи_2");
-        task2.setStatus(TaskStatus.NEW);
-        inMemoryTaskManager.addTask(task2);
+        Epic epic2 = new Epic("Эпик2", "Описание_Эпика_2");
+        taskManager.addEpic(epic2);
 
-        Epic epic1 = new Epic();
-        epic1.setName("эпик1");
-        epic1.setDescription("Описание_эпика_1");
-        inMemoryTaskManager.addEpic(epic1);
 
-        SubTask subTask1 = new SubTask();
+        Task task3 = new Task("Задача1", "Описание_задачи_1");
+        taskManager.addTask(task3);
 
-        subTask1.setName("подзадача1");
-        subTask1.setDescription("Описание_подзадачи_1");
-        subTask1.setStatus(TaskStatus.NEW);
-        subTask1.setEpicId(epic1.getId());
-        inMemoryTaskManager.addSubTask(subTask1);
+        Task task4 = new Task("Задача2", "Описание_задачи_2");
+        taskManager.addTask(task4);
 
-        SubTask subTask2 = new SubTask();
 
-        subTask2.setName("подзадача2");
-        subTask2.setDescription("Описание_подзадачи_2");
-        subTask2.setStatus(TaskStatus.NEW);
-        subTask2.setEpicId(epic1.getId());
-        inMemoryTaskManager.addSubTask(subTask2);
+        SubTask subTask5 = new SubTask("Подзадача1", "Описание_подзадачи_1", 1);
+        taskManager.addSubTask(subTask5);
+        SubTask subTask6 = new SubTask("Подзадача2", "Описание_подзадачи_2", 1);
+        taskManager.addSubTask(subTask6);
+        SubTask subTask7 = new SubTask("Подзадача3", "Описание_подзадачи_3", 1);
+        taskManager.addSubTask(subTask7);
 
-        Epic epic2 =new Epic();
+        taskManager.getEpic(epic1.getId());
+        taskManager.getEpic(epic2.getId());
+        taskManager.getTask(task3.getId());
+        taskManager.getTask(task4.getId());
+        taskManager.getSubTask(subTask5.getId());
+        taskManager.getSubTask(subTask6.getId());
+        taskManager.getSubTask(subTask7.getId());
+        System.out.println(taskManager.getHistory());
+        taskManager.getSubTask(subTask7.getId());
+        taskManager.getSubTask(subTask6.getId());
+        taskManager.getSubTask(subTask5.getId());
+        taskManager.getTask(task4.getId());
+        taskManager.getTask(task3.getId());
+        taskManager.getEpic(epic2.getId());
+        taskManager.getEpic(epic1.getId());
 
-        epic2.setName("эпик2");
-        epic2.setDescription("Описание_эпика_2");
-        inMemoryTaskManager.addEpic(epic2);
+        System.out.println(taskManager.getHistory());
+        taskManager.deleteSubtasks();
+        taskManager.deleteTasks();
+        taskManager.deleteEpics();
 
-        SubTask subTask3 = new SubTask();
-
-        subTask3.setName("подзадача3");
-        subTask3.setDescription("Описание_подзадачи_3");
-        subTask3.setStatus(TaskStatus.NEW);
-        subTask3.setEpicId(epic2.getId());
-        inMemoryTaskManager.addSubTask(subTask3);
-
-        inMemoryTaskManager.getTask(1);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.getTask(2);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.getSubTask(4);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.getTask(1);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.getEpic(3);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.deleteTask(2);
-        System.out.println(inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.deleteEpic(3);
-        System.out.println(inMemoryTaskManager.getHistory());
     }
 }

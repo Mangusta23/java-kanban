@@ -5,7 +5,18 @@ public class Task {
     protected String description;
     protected int id;
     protected TaskStatus status;
+    protected Types type;
 
+    public Task(String name, String description) {
+        this.name = name;
+        this.status = TaskStatus.NEW;
+        this.description = description;
+        this.type = Types.TASK;
+    }
+
+    public void setType(Types type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -42,5 +53,17 @@ public class Task {
     @Override
     public String toString(){
         return "'ID' " + id + " 'name' " + name + " 'Description' " + description + " 'Status' " + status;
+    }
+    public void setStatus(String s) {
+        if (s.equals(TaskStatus.NEW)) {
+            status = TaskStatus.NEW;
+        } else if (s.equals(TaskStatus.DONE)) {
+            status = TaskStatus.DONE;
+        } else if (s.equals(TaskStatus.IN_PROGRESS)) {
+            status = TaskStatus.IN_PROGRESS;
+        }
+    }
+    public Types getType() {
+        return type;
     }
 }

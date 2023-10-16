@@ -3,10 +3,12 @@ import Model.*;
 
 import Manager.InMemoryTaskManager;
 import Manager.TaskManager;
+import java.io.File;
 
 public class Managers {
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        File file = new File("Tasks.txt");
+        return new FileBackedTasksManager(file);
     }
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
