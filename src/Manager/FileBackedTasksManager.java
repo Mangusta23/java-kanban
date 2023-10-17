@@ -1,4 +1,5 @@
 package Manager;
+import Exceptions.ManagerSaveException;
 import Model.Epic;
 import Model.SubTask;
 import Model.Task;
@@ -10,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager{
-    File file;
+public class FileBackedTasksManager extends InMemoryTaskManager {
+    private File file;
 
     public FileBackedTasksManager(File file) {
         super();
@@ -59,7 +60,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     }
 
-    public void fileReader() throws RuntimeException {
+    public void fileReader() {
         LinkedList<String> tasksFromFile = new LinkedList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while (reader.ready()) {
