@@ -18,13 +18,4 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    //public void setStatus(String s) {
-    //    if (s.equals(TaskStatus.NEW)) {
-    //        status = TaskStatus.NEW;
-    //    } else if (s.equals(TaskStatus.DONE)) {
-    //        status = TaskStatus.DONE;
-    //    } else if (s.equals(TaskStatus.IN_PROGRESS)) {
-    //        status = TaskStatus.IN_PROGRESS;
-    //    }
-    //}
 }

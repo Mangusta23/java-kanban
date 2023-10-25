@@ -1,0 +1,5 @@
+id,type,name,status,description,epic
+'ID' 1 'name' Эпик1 'Description' Описание_эпика_1 'Status' IN_PROGRESS
+'ID' 2 'name' Подзадача1 'Description' Описание_подзадачи_1 'Status' DONE
+'ID' 3 'name' Подзадача2 'Description' Описание_подзадачи_2 'Status' NEW
+

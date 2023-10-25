@@ -7,7 +7,7 @@ import java.io.File;
 
 public class Managers {
     public static TaskManager getDefault() {
-        File file = new File(".\\src\\Resources", "Tasks.txt");
+        File file = new File(".\\src\\Resources", "Tasks.csv");
         return new FileBackedTasksManager(file);
     }
     public static HistoryManager getDefaultHistory() {
