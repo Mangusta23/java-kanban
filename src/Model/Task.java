@@ -1,17 +1,25 @@
 package Model;
 
+import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
     protected String name;
     protected String description;
     protected int id;
     protected TaskStatus status;
     protected Types type;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, LocalDateTime startTime, int duration) {
         this.name = name;
         this.status = TaskStatus.NEW;
         this.description = description;
         this.type = Types.TASK;
+        this.startTime = startTime;
+        this.duration = Duration.ofMinutes(duration);
     }
 
     public void setType(Types type) {
@@ -52,7 +60,14 @@ public class Task {
 
     @Override
     public String toString(){
-        return "'ID' " + id + " 'name' " + name + " 'Description' " + description + " 'Status' " + status;
+        return id + ", " +
+                type + ", " +
+                name + ", " +
+                status + ", " +
+                description + ", " +
+                (startTime != null ? startTime.format(DateTimeFormatter.ofPattern("yyy.MM.dd HH:mm")):
+                        "null") + ", " +
+                (duration != null ? duration.toSeconds() : "null");
     }
     public void setStatus(String s) {
         if (s.equals(TaskStatus.NEW)) {
@@ -65,5 +80,26 @@ public class Task {
     }
     public Types getType() {
         return type;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null) return null;
+        else return startTime.plus(duration);
     }
 }

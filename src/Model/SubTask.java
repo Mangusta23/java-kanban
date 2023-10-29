@@ -1,10 +1,12 @@
 package Model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class SubTask extends Task {
 
-    public SubTask(String name, String description, int epicId) {
-        super(name,
-                description);
+    public SubTask(String name, String description, int epicId, LocalDateTime startTime, int duration) {
+        super(name, description, startTime, duration);
         this.epicId = epicId;
         this.type = Types.SUBTASK;
     }
@@ -16,6 +18,19 @@ public class SubTask extends Task {
 
     public void setEpicId(int epicId) {
         this.epicId = epicId;
+    }
+
+    @Override
+    public String toString() {
+        return id + ", " +
+                type + ", " +
+                name + ", " +
+                status + ", " +
+                description + ", " +
+                epicId + ", " +
+                (startTime != null ? startTime.format(DateTimeFormatter.ofPattern("yyy.MM.dd HH:mm")):
+                        "null") + ", " +
+                (duration != null ? duration.toSeconds() : "null");
     }
 
 }

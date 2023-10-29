@@ -6,6 +6,8 @@ import Model.Task;
 import Model.Types;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static List<Integer> historyFromString(String value) {
         List<Integer> history = new LinkedList<>();
-        String[] str = value.split(",");
+        String[] str = value.split(", ");
         for (String s : str) {
             history.add(Integer.parseInt(s));
         }
@@ -29,7 +31,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static String historyToString(HistoryManager manager) {
-        StringJoiner strj = new StringJoiner(",");
+        StringJoiner strj = new StringJoiner(", ");
         for (Task task : manager.getHistory()) {
             strj.add(String.valueOf(task.getId()));
         }
@@ -43,21 +45,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
     public Task fromString(String string) {
         String[] split = string.split(", ");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy.MM.dd HH:mm");
 
-        if (split.length == 6) {
-            SubTask subTask = new SubTask(split[2], split[4], Integer.parseInt(split[5]));
-            subTask.setType(Types.valueOf(split[1]));
-            subTask.setStatus(split[3]);
-            subTask.setId(Integer.parseInt(split[0]));
-            return subTask;
+        Task task;
+
+        if (Types.valueOf(split[1]).equals(Types.SUBTASK)) {
+            task = new SubTask(split[2],
+                    split[4],
+                    Integer.parseInt(split[5]),
+                    LocalDateTime.parse(split[6], formatter),
+                    Integer.parseInt(split[7]));
+        } else if (Types.valueOf(split[1]).equals(Types.TASK)) {
+            task = new Task(split[2],
+                    split[4],
+                    (split[5].equals("null") ? null : (LocalDateTime.parse(split[5], formatter))),
+                    Integer.parseInt(split[6]));
         } else {
-            Task task = new Task(split[2], split[4]);
-            task.setType(Types.valueOf(split[1]));
-            task.setStatus(split[3]);
-            task.setId(Integer.parseInt(split[0]));
-            return task;
+            task = new Epic(split[2],
+                    split[4],
+                    (split[5].equals("null") ? null : (LocalDateTime.parse(split[5], formatter))),
+                    Integer.parseInt(split[6]));
         }
-
+        task.setType(Types.valueOf(split[1]));
+        task.setStatus(split[3]);
+        task.setId(Integer.parseInt(split[0]));
+        return task;
     }
 
     public void fileReader() {
@@ -67,58 +79,42 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 String lines = reader.readLine();
                 tasksFromFile.add(lines);
             }
-            tasksFromFile.removeFirst();
-            for (int i = 0; i < tasksFromFile.size() - 2; i++) {
-                Task task = fromString(tasksFromFile.get(i));
-                switch (task.getType()) {
-                    case SUBTASK:
-                        subTasks.put(task.getId(), (SubTask) task);
-                        break;
-                    case EPIC:
-                        epics.put(task.getId(), (Epic) task);
-                        break;
-                    case TASK:
-                        tasks.put(task.getId(), task);
-                        break;
+            if (tasksFromFile.size() != 2) {
+                tasksFromFile.removeFirst();
+                if (tasksFromFile.size() > 2) {
+                    for (int i = 0; i < tasksFromFile.size() - 2; i++) {
+                        Task task = fromString(tasksFromFile.get(i));
+                        tasksToMap(task);
+                    }
+                }
+                if (!tasksFromFile.getLast().equals("")) {
+                    List<Integer> history = historyFromString(tasksFromFile.getLast());//возврат истории просмотров
+                    for (Integer historyId : history) {
+                        historyBack(historyId);
+                    }
                 }
             }
-            List<Integer> hfs = historyFromString(tasksFromFile.getLast());
-            for (Integer hf : hfs) {
-                if (tasks.containsKey(hf)) {
-                    historyManager.add(tasks.get(hf));
-                } else if (subTasks.containsKey(hf)) {
-                    historyManager.add(subTasks.get(hf));
-                } else if (epics.containsKey(hf)) {
-                    historyManager.add(epics.get(hf));
-                }
-            }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка, файл не найден");
-        }
-    }
-    public void save() throws ManagerSaveException {
-
-        try (BufferedWriter writter = new BufferedWriter(new FileWriter(file))) {
-
-            writter.write("id,type,name,status,description,epic\n");
-
-            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                Task value = entry.getValue();
-                writter.write(value.toString() + "\n");
-            }
-            for (Map.Entry<Integer, Epic> entry : epics.entrySet()) {
-                Task value = entry.getValue();
-                writter.write(value.toString() + "\n");
-            }
-            for (Map.Entry<Integer, SubTask> entry : subTasks.entrySet()) {
-                Task value = entry.getValue();
-                writter.write(value.toString() + "\n");
-            }
-
-            writter.write("\n" + historyToString(historyManager));
-
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка, файла не существует");
+        }
+
+    }
+    public void save() throws ManagerSaveException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write("id,type,name,status,description,epic\n");
+            saveTasks(writer, epics);
+            saveTasks(writer, tasks);
+            saveTasks(writer, subTasks);
+            writer.write("\n" + historyToString(historyManager));
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка, файла не существует");
+        }
+
+    }
+
+    private void saveTasks(BufferedWriter writer, Map<Integer, ? extends Task> taskMap) throws IOException {
+        for (Task task : taskMap.values()) {
+            writer.write(task.toString() + "\n");
         }
     }
     @Override
@@ -209,5 +205,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         historyManager.add(subTask);
         save();
         return subTask;
+    }
+
+    public void tasksToMap(Task task) {
+        switch (task.getType()) {
+            case SUBTASK:
+                subTasks.put(task.getId(), (SubTask) task);
+                break;
+            case EPIC:
+                epics.put(task.getId(), (Epic) task);
+                break;
+            case TASK:
+                tasks.put(task.getId(), task);
+                break;
+        }
+    }
+
+    public void historyBack(int id) {
+        if (tasks.containsKey(id)) {
+            historyManager.add(tasks.get(id));
+        } else if (subTasks.containsKey(id)) {
+            historyManager.add(subTasks.get(id));
+        } else if (epics.containsKey(id)) {
+            historyManager.add(epics.get(id));
+        }
     }
 }

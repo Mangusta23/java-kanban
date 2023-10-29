@@ -1,6 +1,8 @@
 package Manager;
+import java.util.Collection;
 import java.util.List;
 import Model.*;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -23,4 +25,6 @@ public interface TaskManager {
     SubTask getSubTask(int id);
     Epic getEpic(int id);
     List<Task> getHistory();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
