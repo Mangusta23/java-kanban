@@ -47,6 +47,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
+    public void removeAll(){
+        historyMap.clear();
+    }
+
+    @Override
     public List<Task> getHistory() {
         ArrayList<Task> history = new ArrayList<>();
         Node<Task> tempNode = head;

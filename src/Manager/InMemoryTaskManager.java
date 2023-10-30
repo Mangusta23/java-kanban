@@ -1,9 +1,7 @@
 package Manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import Model.*;
 
@@ -19,6 +17,12 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public void addTask(Task task) {
+        try {
+            checkTasksSameStartTime(task);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         task.setId(nextId);
         tasks.put(task.getId(), task);
         prioritizedTasks.add(task);
@@ -26,6 +30,12 @@ public class InMemoryTaskManager implements TaskManager{
     }
     @Override
     public void updateTask(Task task) {
+        try {
+            checkTasksSameStartTime(task);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         final Task savedTask = tasks.get(task.getId());
         savedTask.setName(task.getName());
         savedTask.setDescription(task.getDescription());
@@ -34,6 +44,12 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public void updateSubTask(SubTask subtask) {
+        try {
+            checkTasksSameStartTime(subtask);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         final SubTask savedSubTask = subTasks.get(subtask.getId());
         savedSubTask.setName(subtask.getName());
         savedSubTask.setDescription(subtask.getDescription());
@@ -50,6 +66,12 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public void addSubTask(SubTask subTask) {
+        try {
+            checkTasksSameStartTime(subTask);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         subTask.setId(nextId);
         subTasks.put(subTask.getId(), subTask);
         Epic epic = epics.get(subTask.getEpicId());
@@ -78,8 +100,13 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteTask(int id) {
         if (subTasks.containsKey(id)) {
+            int tempEpicId = subTasks.get(id).getEpicId();
+            Epic epic = epics.get(tempEpicId);
+            epic.setDuration(epic.getDuration().minus(subTasks.get(id).getDuration()));
             subTasks.remove(id);
             historyManager.remove(id);
+            checkEpicStatus(tempEpicId);
+            checkEpicStartTime(tempEpicId);
         }
         if (tasks.containsKey(id)) {
             tasks.remove(id);
@@ -89,18 +116,10 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public void deleteAllTasks() {
-        for (int x : subTasks.keySet()){
-            historyManager.remove(x);
-        }
         subTasks.clear();
-        for (int x : epics.keySet()){
-            historyManager.remove(x);
-        }
         epics.clear();
-        for (int x : tasks.keySet()){
-            historyManager.remove(x);
-        }
         tasks.clear();
+        historyManager.removeAll();
         nextId = 1;
     }
     @Override
@@ -174,6 +193,32 @@ public class InMemoryTaskManager implements TaskManager{
                 epics.replace(epicID, epic);
             }
 
+        }
+    }
+
+    public void checkEpicStartTime(int epicId) {
+        Epic epic = epics.get(epicId);
+        for (SubTask y : subTasks.values()){
+            if (y.getEpicId() == epicId){
+                if (epic.getStartTime() == null || epic.getStartTime().isAfter(y.getStartTime())) {
+                    epic.setStartTime(y.getStartTime());
+                }
+            }
+        }
+    }
+
+    public void checkTasksSameStartTime(Task task) {
+        Optional<Task> check = getPrioritizedTasks().stream()
+                .filter(t -> {
+                    LocalDateTime startTime = t.getStartTime();
+                    return startTime != null && startTime.equals(task.getStartTime());
+                })
+                .findFirst();
+
+        if (check.isPresent()) {
+            throw new IllegalStateException("Время начала задачи " + task.getName()
+                    + " не должен совпадать c добавленной ранее" + check.get().getName()
+                    + "задача не записана, пожалуйста создайте задачу заново");
         }
     }
 
