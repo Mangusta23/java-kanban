@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-abstract class TaskManagerTest<T extends TaskManager> {
+public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T taskManager;
 
@@ -151,4 +151,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Task> history = taskManager.getHistory();
         assertEquals(0, history.size());
     }
+
+    @BeforeEach
+    public abstract void init();
 }

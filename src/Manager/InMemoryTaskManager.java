@@ -261,6 +261,9 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
+    public ArrayList<Epic> getAllEpics() {return new ArrayList<>(epics.values());}
+
+    @Override
     public List<Task> getHistory(){
         return historyManager.getHistory();
     }
